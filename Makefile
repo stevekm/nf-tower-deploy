@@ -41,6 +41,8 @@ export TOWER_SMTP_PASSWORD=password
 run: nf-tower
 	cd nf-tower && make run
 
+# TODO: need to get dump STMP servers running in order to catch the dump token email and then click the link to get the dumb token; try looking in this! https://stackoverflow.com/questions/11174682/how-to-setup-an-smtp-server-on-mac-os-x/58406183#58406183
+
 bash:
 	bash
 
