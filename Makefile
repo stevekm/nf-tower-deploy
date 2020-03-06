@@ -35,7 +35,6 @@ init: install
 
 # this works once you get the Java set up
 build: nf-tower
-	which java
 	cd nf-tower && \
 	make build
 
