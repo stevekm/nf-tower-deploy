@@ -2,33 +2,36 @@ SHELL:=/bin/bash
 UNAME:=$(shell uname)
 
 ifeq ($(UNAME), Darwin)
-# wget https://anaconda.org/anaconda/openjdk/8.0.152/download/osx-64/openjdk-8.0.152-h393ad39_1.tar.bz2
-export JAVA_HOME:=$(CURDIR)/openjdk-8.0.152-h393ad39_1
-JDK_GZ:=$(JAVA_HOME)/openjdk-8.0.152-h393ad39_1.tar.bz2
+JDK_DIR:=openjdk-8.0.152-h393ad39_1
+JDK_GZ:=$(JDK_DIR).tar.bz2
+JDK_URL:=https://anaconda.org/anaconda/openjdk/8.0.152/download/osx-64/$(JDK_GZ)
+export JAVA_HOME:=$(CURDIR)/$(JDK_DIR)
 export PATH:=$(JAVA_HOME)/bin:$(PATH)
 endif
 
 # have not tested this yet
-# ifeq ($(UNAME), Linux)
+ifeq ($(UNAME), Linux)
+FOO:=$(shell echo this does not work yet; exit 1)
 # JDK_GZ:=openjdk-12.0.2_linux-x64_bin.tar.gz
 # JAVA_HOME:=jdk-12.0.2
 # # JDK_URL:=https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/$(JDK_GZ)
 # export PATH:=$(JAVA_HOME):$(PATH)
-# endif
+endif
 
-
-
-$(JDK_GZ):
-	wget $(JDK_URL)
-
-$(JAVA_HOME): $(JDK_GZ)
+$(JAVA_HOME):
+	mkdir -p "$(JAVA_HOME)" && \
+	cd "$(JAVA_HOME)" && \
+	wget $(JDK_URL) && \
 	tar -xzf $(JDK_GZ)
-
-install: $(JAVA_HOME) nf-tower
 
 # 0a8b455d9c85ac835664dd95344b5f5c07a72d59
 nf-tower:
 	git clone https://github.com/seqeralabs/nf-tower.git
+
+install: $(JAVA_HOME) nf-tower
+
+init: install
+	git submodule update --recursive --remote --init
 
 # this works once you get the Java set up
 build: nf-tower
@@ -42,6 +45,10 @@ run: nf-tower
 	cd nf-tower && make run
 
 # TODO: need to get dump STMP servers running in order to catch the dump token email and then click the link to get the dumb token; try looking in this! https://stackoverflow.com/questions/11174682/how-to-setup-an-smtp-server-on-mac-os-x/58406183#58406183
+
+test:
+	which java
+	java -version
 
 bash:
 	bash
